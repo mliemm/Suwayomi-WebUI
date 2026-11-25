@@ -724,6 +724,10 @@ msgstr "Bright Pink"
 msgid "Browse"
 msgstr "Browse"
 
+#: src/features/library/screens/Library.tsx
+msgid "Browse sources"
+msgstr "Browse sources"
+
 #: src/features/settings/Settings.constants.ts
 msgid "Browser"
 msgstr "Browser"
@@ -990,6 +994,7 @@ msgstr "Color filter blend mode"
 
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/library/components/LibraryViewMenu.tsx
 msgid "Comfortable grid"
 msgstr "Comfortable grid"
 
@@ -1001,6 +1006,7 @@ msgstr "Comic"
 
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/library/components/LibraryViewMenu.tsx
 msgid "Compact grid"
 msgstr "Compact grid"
 
@@ -1547,6 +1553,7 @@ msgstr "Discord"
 #: src/base/components/GridLayouts.tsx
 #: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/library/components/LibraryViewMenu.tsx
 #: src/features/settings/screens/Appearance.tsx
 msgid "Display"
 msgstr "Display"
@@ -1846,6 +1853,7 @@ msgstr "Failed to disconnect from KOReader Sync server."
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/history/screens/HistorySettings.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/library/components/LibraryViewMenu.tsx
 #: src/features/library/screens/LibrarySettings.tsx
 #: src/features/migration/screens/MigrationSelectSource.tsx
 #: src/features/settings/components/globalUpdate/GlobalUpdateSettings.tsx
@@ -2429,12 +2437,17 @@ msgstr "Limit reader width"
 msgid "Limit the amount of new chapters that are going to get downloaded."
 msgstr "Limit the amount of new chapters that are going to get downloaded."
 
+#: src/features/theme/Themes.ts
+msgid "Linear"
+msgstr "Linear"
+
 #: src/features/settings/screens/About.tsx
 msgid "Links"
 msgstr "Links"
 
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/library/components/LibraryViewMenu.tsx
 msgid "List"
 msgstr "List"
 
@@ -3726,6 +3739,10 @@ msgstr "Sort"
 msgid "Source"
 msgstr "Source"
 
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Source browsing is not available on this server version"
+msgstr "Source browsing is not available on this server version"
+
 #: src/features/source/configuration/screens/SourceConfigure.tsx
 msgid "Source Configuration"
 msgstr "Source Configuration"
@@ -4271,6 +4288,10 @@ msgstr "Update progress after manually marking as read"
 #: src/features/tracker/screens/TrackingSettings.tsx
 msgid "Update progress after reading"
 msgstr "Update progress after reading"
+
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Update the Suwayomi server to use source browsing with this WebUI build."
+msgstr "Update the Suwayomi server to use source browsing with this WebUI build."
 
 #: src/features/app-updates/components/ServerUpdateChecker.tsx
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
