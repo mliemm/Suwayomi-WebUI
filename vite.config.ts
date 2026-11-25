@@ -57,7 +57,12 @@ export default defineConfig(({ command }) => ({
         },
     },
     optimizeDeps: {
-        include: ['@mui/material/Tooltip'],
+        include: [
+            '@mui/material/Tooltip',
+            '@mliemm/kit > react',
+            '@mliemm/kit > react/jsx-runtime',
+            '@mliemm/kit > react-dom',
+        ],
     },
     plugins: [
         tailwindcss(),
