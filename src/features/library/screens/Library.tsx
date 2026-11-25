@@ -282,7 +282,7 @@ export function Library() {
             <EmptyViewAbsoluteCentered
                 message={t`Your library is empty`}
                 action={
-                    <KitButton asChild className="pointer-events-auto mt-1">
+                    <KitButton asChild className="pointer-events-auto mt-1 no-underline">
                         <Link to={AppRoutes.browse.path()}>{t`Browse sources`}</Link>
                     </KitButton>
                 }
