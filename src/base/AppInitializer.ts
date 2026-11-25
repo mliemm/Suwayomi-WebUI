@@ -69,6 +69,11 @@ export class AppInitializer {
                 requestManager.processQueues();
             },
         },
+        {
+            key: 'detectServerSettingsCapability',
+            required: false,
+            setup: () => requestManager.detectServerSettingsCapability(),
+        },
         [
             {
                 key: 'globalMeta',

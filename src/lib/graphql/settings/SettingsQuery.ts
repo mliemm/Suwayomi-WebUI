@@ -17,3 +17,13 @@ export const GET_SERVER_SETTINGS = gql`
         }
     }
 `;
+
+export const GET_SETTINGS_TYPE_FIELDS = gql`
+    query GET_SETTINGS_TYPE_FIELDS {
+        __type(name: "SettingsType") {
+            fields {
+                name
+            }
+        }
+    }
+`;

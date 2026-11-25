@@ -42,6 +42,7 @@ import type {
 } from '@/lib/graphql/generated/graphql.ts';
 import { FetchSourceMangaType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_SERVER_SETTINGS } from '@/lib/graphql/settings/SettingsQuery.ts';
+import { getServerSettingsOperation } from '@/lib/graphql/settings/ServerSettingsFallback.ts';
 import { MangaMigration } from '@/features/migration/MangaMigration.ts';
 import type {
     MangaArtistInfo,
@@ -154,7 +155,7 @@ export class MigrationManager {
                 GetServerSettingsQuery,
                 GetServerSettingsQueryVariables
             >({
-                query: GET_SERVER_SETTINGS,
+                query: getServerSettingsOperation(GET_SERVER_SETTINGS),
             });
 
             MigrationManager.parallelSourcesQueue = pLimit(

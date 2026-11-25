@@ -51,6 +51,7 @@ import {
     SYNC_STATE_TRANSLATION,
 } from '@/features/settings/Settings.constants.ts';
 import { ServerAddressSetting } from '@/features/settings/components/ServerAddressSetting.tsx';
+import { areServerSettingsFieldsSupported } from '@/lib/graphql/settings/ServerSettingsFallback.ts';
 import { AuthManager } from '@/features/authentication/AuthManager.ts';
 import type { ServerSettings as ServerSettingsType } from '@/features/settings/Settings.types.ts';
 import { KoreaderSyncSettings } from '@/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx';
@@ -223,6 +224,7 @@ export const ServerSettings = () => {
     }
 
     const serverSettings = data!.settings;
+    const supportsDatabaseSchemaAndPoolSize = areServerSettingsFieldsSupported();
     const koreaderSyncStatus = koSyncStatus.data!.koSyncStatus;
     const authModeDisabled = !serverSettings.authUsername?.trim() || !serverSettings.authPassword?.trim();
     const isH2Database = serverSettings.databaseType === DatabaseType.H2;
@@ -725,12 +727,14 @@ export const ServerSettings = () => {
                     disabled={isH2Database}
                     isPassword
                 />
-                <TextSetting
-                    settingName={t`Schema`}
-                    value={serverSettings.databaseSchema}
-                    handleChange={(schema) => updateSetting('databaseSchema', schema)}
-                    disabled={isH2Database}
-                />
+                {supportsDatabaseSchemaAndPoolSize && (
+                    <TextSetting
+                        settingName={t`Schema`}
+                        value={serverSettings.databaseSchema ?? ''}
+                        handleChange={(schema) => updateSetting('databaseSchema', schema)}
+                        disabled={isH2Database}
+                    />
+                )}
                 <ListItem>
                     <ListItemText
                         primary={t`Hikari connection pool`}
@@ -742,28 +746,30 @@ export const ServerSettings = () => {
                         onChange={(e) => updateSetting('useHikariConnectionPool', e.target.checked)}
                     />
                 </ListItem>
-                <NumberSetting
-                    settingTitle={t`Hikari max pool size`}
-                    settingValue={serverSettings.hikariMaxPoolSize.toString()}
-                    dialogDescription={
-                        <Trans>
-                            The maximum number of actual connections to the database; see{' '}
-                            <Link
-                                href="https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                HikariCP: About-Pool-Sizing
-                            </Link>
-                        </Trans>
-                    }
-                    value={serverSettings.hikariMaxPoolSize}
-                    defaultValue={6}
-                    minValue={1}
-                    valueUnit={t`Connection`}
-                    handleUpdate={(value) => updateSetting('hikariMaxPoolSize', value)}
-                    disabled={!serverSettings.useHikariConnectionPool}
-                />
+                {supportsDatabaseSchemaAndPoolSize && (
+                    <NumberSetting
+                        settingTitle={t`Hikari max pool size`}
+                        settingValue={(serverSettings.hikariMaxPoolSize ?? 6).toString()}
+                        dialogDescription={
+                            <Trans>
+                                The maximum number of actual connections to the database; see{' '}
+                                <Link
+                                    href="https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    HikariCP: About-Pool-Sizing
+                                </Link>
+                            </Trans>
+                        }
+                        value={serverSettings.hikariMaxPoolSize ?? 6}
+                        defaultValue={6}
+                        minValue={1}
+                        valueUnit={t`Connection`}
+                        handleUpdate={(value) => updateSetting('hikariMaxPoolSize', value)}
+                        disabled={!serverSettings.useHikariConnectionPool}
+                    />
+                )}
             </List>
             <List
                 subheader={

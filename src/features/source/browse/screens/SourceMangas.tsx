@@ -456,6 +456,9 @@ export function SourceMangas() {
     );
 
     const EmptyViewComponent = mangas.length ? EmptyView : EmptyViewAbsoluteCentered;
+    const sourceBrowseErrorMessage = getErrorMessage(error);
+    const isSourceBrowseUnsupported =
+        sourceBrowseErrorMessage.includes('fetchSourceManga') && sourceBrowseErrorMessage.includes('FieldUndefined');
 
     return (
         <StyledGridWrapper>
@@ -517,9 +520,21 @@ export function SourceMangas() {
             )}
             {error && (
                 <EmptyViewComponent
-                    message={t`Unable to load data`}
-                    messageExtra={getErrorMessage(error)}
-                    retry={() => loadPage(lastPageNum).catch(defaultPromiseErrorHandler('SourceMangas::refetch'))}
+                    message={
+                        isSourceBrowseUnsupported
+                            ? t`Source browsing is not available on this server version`
+                            : t`Unable to load data`
+                    }
+                    messageExtra={
+                        isSourceBrowseUnsupported
+                            ? t`Update the Suwayomi server to use source browsing with this WebUI build.`
+                            : sourceBrowseErrorMessage
+                    }
+                    retry={
+                        isSourceBrowseUnsupported
+                            ? undefined
+                            : () => loadPage(lastPageNum).catch(defaultPromiseErrorHandler('SourceMangas::refetch'))
+                    }
                 />
             )}
             {contentType === SourceContentType.SEARCH && (

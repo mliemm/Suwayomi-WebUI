@@ -23,6 +23,13 @@ import { useEffect } from 'react';
 import type { GraphQLFormattedError } from 'graphql';
 import { BaseClient } from '@/lib/requests/client/BaseClient.ts';
 import type { TypedTypePolicies } from '@/lib/graphql/generated/apollo-helpers.ts';
+import {
+    areServerSettingsFieldsSupported,
+    documentContainsUnsupportedServerSettingsFields,
+    isUnsupportedServerSettingsFieldError,
+    markServerSettingsFieldsUnsupported,
+    stripUnsupportedServerSettingsFields,
+} from '@/lib/graphql/settings/ServerSettingsFallback.ts';
 import { AuthManager } from '@/features/authentication/AuthManager.ts';
 import type { RefreshAccessTokenMutation } from '@/lib/graphql/generated/graphql.ts';
 import type { AbortableApolloMutationResponse } from '@/lib/requests/RequestManager.ts';
@@ -335,8 +342,37 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
         );
     }
 
+    private createServerSettingsFallbackLink() {
+        return new ApolloLink((operation, forward) => {
+            if (
+                areServerSettingsFieldsSupported() ||
+                !documentContainsUnsupportedServerSettingsFields(operation.query)
+            ) {
+                return forward(operation);
+            }
+
+            // oxlint-disable-next-line no-param-reassign
+            operation.query = stripUnsupportedServerSettingsFields(operation.query);
+            return forward(operation);
+        });
+    }
+
     private createErrorLink() {
         return new ErrorLink(({ error, operation, forward }) => {
+            if (
+                CombinedGraphQLErrors.is(error) &&
+                isUnsupportedServerSettingsFieldError(error.errors) &&
+                documentContainsUnsupportedServerSettingsFields(operation.query) &&
+                !operation.getContext().serverSettingsFallbackRetried
+            ) {
+                markServerSettingsFieldsUnsupported();
+                // oxlint-disable-next-line no-param-reassign
+                operation.query = stripUnsupportedServerSettingsFields(operation.query);
+                operation.setContext({ serverSettingsFallbackRetried: true });
+
+                return forward(operation);
+            }
+
             if (this.isRateLimitError(error)) {
                 this.addRateLimit(
                     this.getRateLimitOrigin(operation),
@@ -394,6 +430,7 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
             this.createWSLink(),
             ApolloLink.from([
                 this.createAuthGuardLink(),
+                this.createServerSettingsFallbackLink(),
                 this.createErrorLink(),
                 this.createAuthLink(),
                 removeTypenameLink,

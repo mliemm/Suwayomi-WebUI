@@ -313,8 +313,14 @@ import { CREATE_BACKUP, RESTORE_BACKUP } from '@/lib/graphql/backup/BackupMutati
 import { GET_RESTORE_STATUS, VALIDATE_BACKUP } from '@/lib/graphql/backup/BackupQuery.ts';
 import { DOWNLOAD_STATUS_SUBSCRIPTION } from '@/lib/graphql/download/DownloaderSubscription.ts';
 import { UPDATER_SUBSCRIPTION } from '@/lib/graphql/updater/UpdaterSubscription.ts';
-import { GET_SERVER_SETTINGS } from '@/lib/graphql/settings/SettingsQuery.ts';
+import { GET_SERVER_SETTINGS, GET_SETTINGS_TYPE_FIELDS } from '@/lib/graphql/settings/SettingsQuery.ts';
 import { UPDATE_SERVER_SETTINGS } from '@/lib/graphql/settings/SettingsMutation.ts';
+import {
+    UNSUPPORTED_SERVER_SETTINGS_FIELDS,
+    getServerSettingsOperation,
+    markServerSettingsFieldsSupported,
+    markServerSettingsFieldsUnsupported,
+} from '@/lib/graphql/settings/ServerSettingsFallback.ts';
 import { CLEAR_SERVER_CACHE } from '@/lib/graphql/image/ImageMutation.ts';
 import { RESET_WEBUI_UPDATE_STATUS, UPDATE_WEBUI } from '@/lib/graphql/server/ServerInfoMutation.ts';
 import { WEBUI_UPDATE_SUBSCRIPTION } from '@/lib/graphql/server/ServerInfoSubscription.ts';
@@ -3873,22 +3879,52 @@ export class RequestManager {
         });
     }
 
+    public async detectServerSettingsCapability(): Promise<void> {
+        try {
+            const { data } = await this.graphQLClient.client.query<{
+                __type: { fields: { name: string }[] } | null;
+            }>({
+                query: GET_SETTINGS_TYPE_FIELDS,
+                fetchPolicy: 'no-cache',
+            });
+
+            const fieldNames = new Set(data?.__type?.fields?.map(({ name }) => name));
+            if (!fieldNames.size) {
+                return;
+            }
+
+            if (UNSUPPORTED_SERVER_SETTINGS_FIELDS.every((field) => fieldNames.has(field))) {
+                markServerSettingsFieldsSupported();
+                return;
+            }
+
+            markServerSettingsFieldsUnsupported();
+        } catch {
+            // Introspection is optional. The error link still retries the reduced query if the server rejects a field.
+        }
+    }
+
     public getServerSettings(
         options?: QueryOptions<GetServerSettingsQueryVariables>,
     ): AbortabaleApolloQueryResponse<GetServerSettingsQuery> {
-        return this.doRequest(GQLMethod.QUERY, GET_SERVER_SETTINGS, undefined, options);
+        return this.doRequest(GQLMethod.QUERY, getServerSettingsOperation(GET_SERVER_SETTINGS), undefined, options);
     }
 
     public useGetServerSettings(
         options?: QueryHookOptions<GetServerSettingsQuery, GetServerSettingsQueryVariables>,
     ): AbortableApolloUseQueryResponse<GetServerSettingsQuery, GetServerSettingsQueryVariables> {
-        return this.doRequest(GQLMethod.USE_QUERY, GET_SERVER_SETTINGS, undefined, options);
+        return this.doRequest(GQLMethod.USE_QUERY, getServerSettingsOperation(GET_SERVER_SETTINGS), undefined, options);
     }
 
     public useUpdateServerSettings(
         options?: MutationHookOptions<UpdateServerSettingsMutation, UpdateServerSettingsMutationVariables>,
     ): AbortableApolloUseMutationResponse<UpdateServerSettingsMutation, UpdateServerSettingsMutationVariables> {
-        const [mutate, result] = this.doRequest(GQLMethod.USE_MUTATION, UPDATE_SERVER_SETTINGS, undefined, options);
+        const [mutate, result] = this.doRequest(
+            GQLMethod.USE_MUTATION,
+            getServerSettingsOperation(UPDATE_SERVER_SETTINGS),
+            undefined,
+            options,
+        );
 
         const wrappedMutate = async (mutateOptions: Parameters<typeof mutate>[0]) =>
             mutate({
