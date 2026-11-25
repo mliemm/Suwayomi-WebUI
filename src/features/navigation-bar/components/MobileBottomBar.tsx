@@ -7,10 +7,7 @@
  */
 
 import Paper from '@mui/material/Paper';
-import type { CSSProperties } from 'react';
 import { useCallback, useLayoutEffect, useRef } from 'react';
-import {} from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
 import { useResizeObserver } from '@/base/hooks/useResizeObserver.tsx';
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import type { NavbarItem } from '@/features/navigation-bar/NavigationBar.types.ts';
@@ -18,7 +15,6 @@ import { NavigationBarItem } from '@/features/navigation-bar/components/Navigati
 import Stack from '@mui/material/Stack';
 
 export const MobileBottomBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) => {
-    const theme = useTheme();
     const { setBottomBarHeight } = useNavBarContext();
 
     const ref = useRef<HTMLDivElement | null>(null);
@@ -31,6 +27,8 @@ export const MobileBottomBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) 
     return (
         <Paper
             ref={ref}
+            elevation={0}
+            square
             sx={{
                 position: 'fixed',
                 bottom: 0,
@@ -39,29 +37,17 @@ export const MobileBottomBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) 
                 pb: 'env(safe-area-inset-bottom)',
                 pl: 'env(safe-area-inset-left)',
                 pr: 'env(safe-area-inset-right)',
-                zIndex: theme.zIndex.drawer - 1,
+                zIndex: (theme) => theme.zIndex.drawer - 1,
+                backgroundColor: 'rgba(10, 10, 10, 0.92)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                borderTop: '1px solid #262626',
+                backgroundImage: 'none',
             }}
-            style={{
-                ...(theme.applyStyles('dark', {
-                    '--Paper-overlay': 'unset',
-                }) as CSSProperties),
-            }}
-            elevation={3}
         >
-            <Stack sx={{ flexDirection: 'row' }}>
+            <Stack sx={{ flexDirection: 'row', alignItems: 'stretch' }}>
                 {navBarItems.map((item) => (
-                    <NavigationBarItem
-                        key={item.path}
-                        {...item}
-                        slots={{
-                            listItemLink: {
-                                sx: {
-                                    py: 1,
-                                },
-                            },
-                        }}
-                        isCollapsed
-                    />
+                    <NavigationBarItem key={item.path} {...item} isCollapsed isMobileBottomBar />
                 ))}
             </Stack>
         </Paper>

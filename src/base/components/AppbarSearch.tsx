@@ -13,6 +13,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
+import { Search as CommandSearchIcon } from 'lucide-react';
+import { Button as KitButton } from '@mliemm/kit/web/ui/button';
 import { useQueryParam, StringParam } from 'use-query-params';
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
@@ -62,6 +65,7 @@ export const AppbarSearch: React.FunctionComponent<IProps> = (props) => {
     const { searchHistoryKey, isClosable = true, suggestions = STABLE_EMPTY_ARRAY } = props;
 
     const theme = useTheme();
+    const isMobileWidth = MediaQuery.useIsMobileWidth();
     const { t } = useLingui();
     const { setHideTitle, navBarWidth } = useNavBarContext();
     const scrollbarYSize = MediaQuery.useGetScrollbarSize('Y');
@@ -161,7 +165,7 @@ export const AppbarSearch: React.FunctionComponent<IProps> = (props) => {
     };
 
     useHotkeys(
-        'ctrl+f, F3',
+        'mod+k, ctrl+f, F3',
         () => {
             updateSearchOpenState(true);
         },
@@ -323,24 +327,24 @@ export const AppbarSearch: React.FunctionComponent<IProps> = (props) => {
                             {...params}
                             onClick={() => setHideSuggestions(false)}
                             autoFocus
-                            variant="standard"
+                            variant="outlined"
+                            size="medium"
+                            placeholder={t`Search`}
                             fullWidth
                             onCancel={cancelSearch}
                             onBlur={handleBlur}
                             inputRef={inputRef}
-                            sx={theme.applyStyles('light', {
-                                '& .MuiInput-underline:before': {
-                                    borderBottomColor: 'primary.contrastText', // Default color
+                            sx={{ width: { xs: '100%', md: 320 } }}
+                            slotProps={{
+                                ...params.slotProps,
+                                input: {
+                                    ...params.slotProps.input,
+                                    startAdornment: params.slotProps.input.startAdornment ?? (
+                                        <InputAdornment position="start">
+                                            <CommandSearchIcon className="h-3.5 w-3.5 text-faint" />
+                                        </InputAdornment>
+                                    ),
                                 },
-                                '& .MuiInput-underline:hover:before': {
-                                    borderBottomColor: 'primary.contrastText', // Hover color
-                                },
-                                '& .MuiInput-underline:after': {
-                                    borderBottomColor: 'primary.dark', // Focused color
-                                },
-                            })}
-                            cancelButtonProps={{
-                                sx: theme.applyStyles('light', { color: 'primary.contrastText' }),
                             }}
                         />
                     </Box>
@@ -349,11 +353,34 @@ export const AppbarSearch: React.FunctionComponent<IProps> = (props) => {
         );
     }
 
+    if (isMobileWidth) {
+        return (
+            <CustomTooltip title={t`Search`}>
+                <KitButton
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t`Search`}
+                    onClick={() => updateSearchOpenState(true)}
+                    className="h-8 w-8 text-muted-foreground hover:bg-hover hover:text-foreground"
+                >
+                    <CommandSearchIcon className="h-4 w-4" />
+                </KitButton>
+            </CustomTooltip>
+        );
+    }
+
     return (
-        <CustomTooltip title={t`Search`}>
-            <IconButton onClick={() => updateSearchOpenState(true)} color="inherit">
-                <SearchIcon />
-            </IconButton>
-        </CustomTooltip>
+        <KitButton
+            variant="outline"
+            aria-label={t`Search`}
+            onClick={() => updateSearchOpenState(true)}
+            className="h-8 w-[240px] justify-start gap-2 rounded-md border-border bg-card px-2.5 text-[13px] font-normal text-muted-foreground shadow-none hover:border-border-strong hover:bg-hover hover:text-foreground"
+        >
+            <CommandSearchIcon className="h-3.5 w-3.5 shrink-0 text-faint" />
+            <span className="flex-1 truncate text-left">{t`Search`}</span>
+            <kbd className="rounded-[4px] border border-border bg-elevated px-1.5 py-0.5 font-mono text-[10px] leading-none text-faint">
+                ⌘K
+            </kbd>
+        </KitButton>
     );
 };

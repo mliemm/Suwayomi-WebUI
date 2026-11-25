@@ -9,6 +9,7 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
 import legacy from '@vitejs/plugin-legacy';
 import { VitePWA } from 'vite-plugin-pwa';
 import { lingui } from '@lingui/vite-plugin';
@@ -59,6 +60,7 @@ export default defineConfig(({ command }) => ({
         include: ['@mui/material/Tooltip'],
     },
     plugins: [
+        tailwindcss(),
         react({
             plugins: [['@lingui/swc-plugin', {}]],
         }),

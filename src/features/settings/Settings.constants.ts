@@ -94,8 +94,8 @@ export const SERVER_SETTINGS_METADATA_DEFAULT: MetadataServerSettings = {
 
     // themes
     locale: getPreferredISOLanguageCodes()[0],
-    appTheme: 'default',
-    themeMode: ThemeMode.SYSTEM,
+    appTheme: 'linear',
+    themeMode: ThemeMode.DARK,
     shouldUsePureBlackMode: false,
     customThemes: {},
     mangaThumbnailBackdrop: true,

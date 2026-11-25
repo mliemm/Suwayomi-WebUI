@@ -123,6 +123,7 @@ export function DefaultNavBar() {
         <>
             <AppBar
                 ref={appBarRef}
+                elevation={0}
                 sx={{
                     position: 'fixed',
                     pt: 'env(safe-area-inset-top)',
@@ -133,7 +134,7 @@ export function DefaultNavBar() {
                     width: `calc(100% - ${actualNavBarWidth}px)`,
                 }}
             >
-                <Toolbar sx={{ position: 'relative' }}>
+                <Toolbar disableGutters sx={{ position: 'relative', gap: 1 }}>
                     {isNavBarCollapsible && (
                         <Stack
                             sx={{
@@ -141,13 +142,20 @@ export function DefaultNavBar() {
                                 left: 0,
                                 ...(!isCollapsed && { display: 'none' }),
                                 alignItems: 'center',
+                                justifyContent: 'center',
+                                height: '100%',
                             }}
                             style={{
                                 width: `calc(${navBarWidth}px + env(safe-area-inset-left))`,
                             }}
                         >
-                            <IconButton aria-label="open drawer" onClick={() => setIsCollapsed(false)} color="inherit">
-                                <MenuIcon />
+                            <IconButton
+                                aria-label="open drawer"
+                                size="small"
+                                onClick={() => setIsCollapsed(false)}
+                                color="inherit"
+                            >
+                                <MenuIcon fontSize="small" />
                             </IconButton>
                         </Stack>
                     )}
@@ -155,6 +163,8 @@ export function DefaultNavBar() {
                         sx={{
                             flexDirection: 'row',
                             alignItems: 'center',
+                            gap: 1,
+                            minWidth: 0,
                         }}
                         style={{
                             marginInlineStart: `${isNavBarCollapsible && isCollapsed ? navBarWidth : 0}px`,
@@ -165,28 +175,42 @@ export function DefaultNavBar() {
                             <IconButton
                                 edge="start"
                                 component="button"
-                                sx={{ marginRight: 2 }}
+                                size="small"
                                 aria-label="menu"
                                 onClick={handleBack}
                                 color="inherit"
                             >
-                                {getOptionForDirection(<ArrowBack />, <ArrowForwardIcon />)}
+                                {getOptionForDirection(<ArrowBack fontSize="small" />, <ArrowForwardIcon fontSize="small" />)}
                             </IconButton>
                         )}
                         {!hideTitle && (
                             <Typography
-                                variant="h5"
+                                variant="h6"
                                 component="h1"
                                 noWrap
                                 sx={{
                                     textOverflow: 'ellipsis',
                                     flexGrow: 1,
+                                    minWidth: 0,
+                                    fontSize: 13,
+                                    fontWeight: 500,
+                                    letterSpacing: '-0.01em',
                                 }}
                             >
                                 {title}
                             </Typography>
                         )}
-                        {action}
+                        <Stack
+                            sx={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                ml: hideTitle ? 'auto' : 0,
+                                flexShrink: 0,
+                            }}
+                        >
+                            {action}
+                        </Stack>
                     </Stack>
                 </Toolbar>
             </AppBar>

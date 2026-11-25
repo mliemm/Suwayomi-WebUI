@@ -212,6 +212,9 @@ const MainApp = () => {
             sx={{
                 position: 'relative',
                 pr: 'env(safe-area-inset-right)',
+                px: { xs: 2, md: 3 },
+                pt: { xs: 1.5, md: 2 },
+                boxSizing: 'border-box',
             }}
             style={{
                 minHeight: `calc(100dvh - ${appBarHeight + bottomBarHeight}px)`,
