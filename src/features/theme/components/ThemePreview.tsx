@@ -30,8 +30,8 @@ import { ThemeFontLoader } from '@/features/theme/services/ThemeFontLoader.ts';
 import { Notifications } from '@/base/notification/Notifications.ts';
 
 const ThemePreviewBadge = styled(Box)(() => ({
-    width: '15px',
-    height: '20px',
+    width: '10px',
+    height: '14px',
 }));
 
 export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDelete: () => void }) => {
@@ -53,40 +53,33 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
             sx={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                minWidth: '150px',
-                maxWidth: '150px',
-                gap: 1,
+                minWidth: '132px',
+                maxWidth: '132px',
+                gap: 0.75,
             }}
         >
             <ThemeProvider theme={muiTheme}>
                 <Card
                     sx={{
                         width: '100%',
-                        height: '225px',
+                        height: '156px',
                         position: 'relative',
+                        backgroundColor: '#0D0D0D',
+                        border: '1px solid #1F1F1F',
+                        borderRadius: '8px',
+                        boxShadow: isSelected ? '0 0 0 1px #5E6AD2' : 'none',
+                        '&:hover': {
+                            borderColor: '#333333',
+                        },
+                        ...theme.applyStyles('light', {
+                            backgroundColor: '#FFFFFF',
+                            borderColor: '#E5E5E5',
+                            '&:hover': {
+                                borderColor: '#D4D4D4',
+                            },
+                        }),
                     }}
                 >
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            bottom: 0,
-                            left: 0,
-                            border: '4px solid',
-                            borderColor: isSelected
-                                ? muiTheme.vars.palette.primary.light
-                                : muiTheme.vars.palette.grey['100'],
-                            zIndex: 1,
-                            pointerEvents: 'none',
-                            borderRadius: 1,
-                            ...theme.applyStyles('dark', {
-                                borderColor: isSelected
-                                    ? muiTheme.vars.palette.primary.light
-                                    : muiTheme.vars.palette.grey['900'],
-                            }),
-                        }}
-                    />
                     <CardActionArea
                         sx={{
                             height: '100%',
@@ -106,10 +99,10 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                         }}
                     >
                         <Stack sx={{ height: '100%', m: 0 }}>
-                            <Stack sx={{ height: '100%', gap: 2, p: 2 }}>
+                            <Stack sx={{ height: '100%', gap: 1.5, p: 1.25 }}>
                                 <Stack
                                     sx={{
-                                        maxHeight: '20px',
+                                        maxHeight: '16px',
                                         flexDirection: 'row',
                                         justifyContent: 'space-between',
                                         alignItems: 'flex-start',
@@ -117,24 +110,23 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                 >
                                     <Box
                                         sx={{
-                                            width: '65%',
-                                            height: '20px',
+                                            width: '60%',
+                                            height: '12px',
                                             backgroundColor: 'primary.dark',
-                                            borderRadius: 1,
+                                            borderRadius: '3px',
                                         }}
                                     />
                                     <Stack
                                         sx={{
                                             alignItems: 'center',
                                             gap: 1,
-                                            mt: -0.25,
                                         }}
                                     >
                                         {isSelected && (
                                             <CheckCircleIcon
                                                 sx={{
-                                                    visibility: isSelected ? 'visible' : 'hidden',
-                                                    color: 'primary.light',
+                                                    fontSize: 14,
+                                                    color: '#5E6AD2',
                                                 }}
                                             />
                                         )}
@@ -147,10 +139,9 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                                 }}
                                                 component="div"
                                                 size="small"
-                                                sx={{ mt: -0.5 }}
                                             >
                                                 <CustomTooltip title={t`Delete`} placement="auto">
-                                                    <DeleteIcon />
+                                                    <DeleteIcon sx={{ fontSize: 14 }} />
                                                 </CustomTooltip>
                                             </IconButton>
                                         )}
@@ -169,7 +160,7 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                                 size="small"
                                             >
                                                 <CustomTooltip title={t`Edit`} placement="auto">
-                                                    <EditIcon />
+                                                    <EditIcon sx={{ fontSize: 14 }} />
                                                 </CustomTooltip>
                                             </IconButton>
                                         )}
@@ -178,9 +169,9 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                 <Paper
                                     sx={{
                                         width: '55%',
-                                        height: '65%',
-                                        p: 1,
-                                        borderRadius: 1,
+                                        height: '60%',
+                                        p: 0.75,
+                                        borderRadius: '4px',
                                     }}
                                 >
                                     <Stack
@@ -188,7 +179,7 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                             width: 'max-content',
                                             flexDirection: 'row',
                                             overflow: 'hidden',
-                                            borderRadius: 1,
+                                            borderRadius: '3px',
                                         }}
                                     >
                                         <ThemePreviewBadge sx={{ backgroundColor: 'primary.main' }} />
@@ -202,14 +193,14 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                     backgroundColor: 'background.paper',
                                     alignItems: 'center',
                                     flexDirection: 'row',
-                                    gap: 2,
-                                    p: 2,
+                                    gap: 1.5,
+                                    px: 1.25,
                                 }}
                             >
                                 <Box
                                     sx={{
-                                        width: '20px',
-                                        height: '20px',
+                                        width: '14px',
+                                        height: '14px',
                                         borderRadius: '50%',
                                         backgroundColor: 'primary.main',
                                     }}
@@ -217,8 +208,8 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                                 <Box
                                     sx={{
                                         flexGrow: 1,
-                                        height: '20px',
-                                        borderRadius: 1,
+                                        height: '12px',
+                                        borderRadius: '3px',
                                         backgroundColor: 'primary.light',
                                     }}
                                 />
@@ -228,7 +219,7 @@ export const ThemePreview = ({ appTheme, onDelete }: { appTheme: AppTheme; onDel
                 </Card>
             </ThemeProvider>
             <CustomTooltip title={getName()} placement="top">
-                <TypographyMaxLines sx={{ maxWidth: '100%' }}>{getName()}</TypographyMaxLines>
+                <TypographyMaxLines sx={{ maxWidth: '100%', fontSize: 12 }}>{getName()}</TypographyMaxLines>
             </CustomTooltip>
         </Stack>
     );

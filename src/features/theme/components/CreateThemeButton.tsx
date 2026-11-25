@@ -8,7 +8,7 @@
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddIcon from '@mui/icons-material/Add';
 import { AwaitableComponent } from 'awaitable-component';
 import { useLingui } from '@lingui/react/macro';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
@@ -19,22 +19,31 @@ export const CreateThemeButton = () => {
     const { t } = useLingui();
 
     return (
-        <Stack sx={{ alignItems: 'center', gap: 1, minWidth: '150px', maxWidth: '150px' }}>
+        <Stack sx={{ alignItems: 'center', gap: 0.75, minWidth: '132px', maxWidth: '132px' }}>
             <Button
                 sx={{
                     width: '100%',
-                    height: '225px',
+                    height: '156px',
+                    borderRadius: '8px',
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    backgroundColor: 'transparent',
+                    color: 'text.disabled',
+                    '&:hover': {
+                        borderColor: 'text.disabled',
+                        backgroundColor: 'action.hover',
+                        color: 'text.secondary',
+                    },
                 }}
-                variant="contained"
-                size="large"
+                variant="outlined"
                 onClick={() => {
                     AwaitableComponent.show(ThemeCreationDialog, { mode: 'create' });
                 }}
             >
-                <AddCircleIcon fontSize="large" />
+                <AddIcon fontSize="small" />
             </Button>
             <CustomTooltip title={t`Create theme`} placement="top">
-                <TypographyMaxLines sx={{ maxWidth: '100%' }}>{t`Create theme`}</TypographyMaxLines>
+                <TypographyMaxLines sx={{ maxWidth: '100%', fontSize: 12 }}>{t`Create theme`}</TypographyMaxLines>
             </CustomTooltip>
         </Stack>
     );

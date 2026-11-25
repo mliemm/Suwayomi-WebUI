@@ -20,10 +20,12 @@ export const ListCardAvatar = (props: ComponentProps<typeof AvatarSpinner>) => {
                 avatarProps: {
                     ...slots?.avatarProps,
                     sx: {
-                        width: 56,
-                        height: 56,
+                        width: 40,
+                        height: 40,
                         flex: '0 0 auto',
-                        background: 'transparent',
+                        background: '#161616',
+                        border: '1px solid #1F1F1F',
+                        borderRadius: '6px',
                         ...slots?.avatarProps?.sx,
                     },
                 },

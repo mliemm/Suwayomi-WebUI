@@ -6,7 +6,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
@@ -14,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Stack from '@mui/material/Stack';
+import { Link } from 'react-router-dom';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
@@ -27,34 +27,10 @@ import {
 import { getInstalledState, isNsfw, updateExtension } from '@/features/extension/Extensions.utils.ts';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { ListCardAvatar } from '@/base/components/lists/cards/ListCardAvatar.tsx';
-import { ListCardContent } from '@/base/components/lists/cards/ListCardContent.tsx';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { MUIUtil } from '@/lib/mui/MUI.util.ts';
-import { OptionalCardActionAreaLink } from '@/base/components/lists/cards/OptionalCardActionAreaLink.tsx';
 import { languageCodeToName } from '@/base/utils/Languages.ts';
 import CardActionArea from '@mui/material/CardActionArea';
-
-const CardAction = ({
-    isInstalled,
-    pkgName,
-    children,
-    performExtensionAction,
-}: {
-    isInstalled: boolean;
-    pkgName: string;
-    children?: ReactNode;
-    performExtensionAction: () => void;
-}) => {
-    if (isInstalled) {
-        return (
-            <OptionalCardActionAreaLink to={AppRoutes.extension.children.info.path(pkgName)}>
-                {children}
-            </OptionalCardActionAreaLink>
-        );
-    }
-
-    return <CardActionArea onClick={performExtensionAction}>{children}</CardActionArea>;
-};
 
 interface IProps {
     extension: TExtension;
@@ -128,86 +104,117 @@ export function ExtensionCard(props: IProps) {
         }
     }
 
+    const cardContent = (
+        <>
+            <ListCardAvatar
+                iconUrl={requestManager.getValidImgUrlFor(iconUrl)}
+                alt={name}
+                slots={{
+                    spinnerImageProps: {
+                        ignoreQueue: true,
+                    },
+                }}
+            />
+            <Stack
+                sx={{
+                    justifyContent: 'center',
+                    flexGrow: 1,
+                    flexShrink: 1,
+                    wordBreak: 'break-word',
+                    minWidth: 0,
+                }}
+            >
+                <Typography variant="h6" component="h3">
+                    {name}
+                </Typography>
+                {showSourceStore && !!extensionStore && (
+                    <Typography variant="caption">{extensionStore.name}</Typography>
+                )}
+                <Typography variant="caption">
+                    {isInstalled ? `${languageCodeToName(lang)}` : ''}
+                    {isInstalled ? (
+                        <Typography variant="caption" sx={{ px: 0.5 }}>
+                            —
+                        </Typography>
+                    ) : (
+                        ''
+                    )}
+                    {versionName}
+                    {isObsolete && (
+                        <>
+                            <Typography variant="caption" sx={{ px: 0.5 }}>
+                                —
+                            </Typography>
+                            <Typography variant="caption" color="warning">
+                                {t`Obsolete`}
+                            </Typography>
+                        </>
+                    )}
+                    {isNsfw(contentWarning) && (
+                        <>
+                            <Typography variant="caption" sx={{ px: 0.5 }}>
+                                —
+                            </Typography>
+                            <Typography variant="caption" color="error">
+                                18+
+                            </Typography>
+                        </>
+                    )}
+                </Typography>
+            </Stack>
+        </>
+    );
+
     return (
         <Card>
-            <CardAction isInstalled={isInstalled} pkgName={pkgName} performExtensionAction={handleButtonClick}>
-                <ListCardContent>
-                    <ListCardAvatar
-                        iconUrl={requestManager.getValidImgUrlFor(iconUrl)}
-                        alt={name}
-                        slots={{
-                            spinnerImageProps: {
-                                ignoreQueue: true,
-                            },
-                        }}
-                    />
-                    <Stack
+            <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5, p: 1 }}>
+                {isInstalled ? (
+                    <CardActionArea
+                        component={Link}
+                        to={AppRoutes.extension.children.info.path(pkgName)}
                         sx={{
-                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1.5,
+                            p: 0,
                             flexGrow: 1,
-                            flexShrink: 1,
-                            wordBreak: 'break-word',
+                            minWidth: 0,
+                            borderRadius: '6px',
                         }}
                     >
-                        <Typography variant="h6" component="h3">
-                            {name}
-                        </Typography>
-                        {showSourceStore && !!extensionStore && (
-                            <Typography variant="caption">{extensionStore.name}</Typography>
-                        )}
-                        <Typography variant="caption">
-                            {isInstalled ? `${languageCodeToName(lang)}` : ''}
-                            {isInstalled ? (
-                                <Typography variant="caption" sx={{ px: 0.5 }}>
-                                    —
-                                </Typography>
-                            ) : (
-                                ''
-                            )}
-                            {versionName}
-                            {isObsolete && (
-                                <>
-                                    <Typography variant="caption" sx={{ px: 0.5 }}>
-                                        —
-                                    </Typography>
-                                    <Typography variant="caption" color="warning" sx={{ textTransform: 'uppercase' }}>
-                                        {t`Obsolete`}
-                                    </Typography>
-                                </>
-                            )}
-                            {isNsfw(contentWarning) && (
-                                <>
-                                    <Typography variant="caption" sx={{ px: 0.5 }}>
-                                        —
-                                    </Typography>
-                                    <Typography variant="caption" color="error">
-                                        18+
-                                    </Typography>
-                                </>
-                            )}
-                        </Typography>
+                        {cardContent}
+                    </CardActionArea>
+                ) : (
+                    <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5, flexGrow: 1, minWidth: 0 }}>
+                        {cardContent}
                     </Stack>
-                    {isInstalled && (
-                        <CustomTooltip title={t`Settings`}>
-                            <IconButton color="inherit" {...MUIUtil.preventRippleProp()}>
-                                <SettingsIcon />
-                            </IconButton>
-                        </CustomTooltip>
-                    )}
-                    <Button
-                        variant="outlined"
-                        sx={{ flexShrink: 0 }}
-                        {...MUIUtil.preventRippleProp()}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleButtonClick();
-                        }}
-                    >
-                        {t(INSTALLED_STATE_TO_TRANSLATION_MAP[installedState])}
-                    </Button>
-                </ListCardContent>
-            </CardAction>
+                )}
+                {isInstalled && (
+                    <CustomTooltip title={t`Settings`}>
+                        <IconButton
+                            color="inherit"
+                            component={Link}
+                            to={AppRoutes.extension.children.info.path(pkgName)}
+                            {...MUIUtil.preventRippleProp()}
+                        >
+                            <SettingsIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                )}
+                <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ flexShrink: 0 }}
+                    {...MUIUtil.preventRippleProp()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleButtonClick();
+                    }}
+                >
+                    {t(INSTALLED_STATE_TO_TRANSLATION_MAP[installedState])}
+                </Button>
+            </Stack>
         </Card>
     );
 }

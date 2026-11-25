@@ -12,9 +12,9 @@ import { styled } from '@mui/material/styles';
 
 const StyledTabsMenu = styled(Tabs)(({ theme }) => ({
     display: 'flex',
-    backgroundColor: theme.vars.palette.background.default,
+    backgroundColor: 'transparent',
     border: 0,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderStyle: 'solid',
     borderColor: theme.vars.palette.divider,
 }));

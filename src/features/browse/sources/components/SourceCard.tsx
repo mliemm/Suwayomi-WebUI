@@ -23,7 +23,6 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { MUIUtil } from '@/lib/mui/MUI.util.ts';
 import { Sources } from '@/features/source/services/Sources.ts';
 import { ListCardAvatar } from '@/base/components/lists/cards/ListCardAvatar.tsx';
-import { ListCardContent } from '@/base/components/lists/cards/ListCardContent.tsx';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { createUpdateSourceMetadata, useGetSourceMetadata } from '@/features/source/services/SourceMetadata.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
@@ -62,15 +61,24 @@ export const SourceCard: React.FC<IProps> = (props: IProps) => {
 
     return (
         <Card>
-            <CardActionArea
-                component={Link}
-                to={AppRoutes.sources.children.browse.path(id)}
-                state={AppRoutes.sources.children.browse.state({
-                    contentType: SourceContentType.POPULAR,
-                    clearCache: true,
-                })}
-            >
-                <ListCardContent>
+            <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5, p: 1 }}>
+                <CardActionArea
+                    component={Link}
+                    to={AppRoutes.sources.children.browse.path(id)}
+                    state={AppRoutes.sources.children.browse.state({
+                        contentType: SourceContentType.POPULAR,
+                        clearCache: true,
+                    })}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        p: 0,
+                        flexGrow: 1,
+                        minWidth: 0,
+                        borderRadius: '6px',
+                    }}
+                >
                     <ListCardAvatar
                         iconUrl={requestManager.getValidImgUrlFor(iconUrl)}
                         alt={sourceName}
@@ -86,6 +94,7 @@ export const SourceCard: React.FC<IProps> = (props: IProps) => {
                             flexGrow: 1,
                             flexShrink: 1,
                             wordBreak: 'break-word',
+                            minWidth: 0,
                         }}
                     >
                         <Typography variant="h6" component="h3">
@@ -103,34 +112,35 @@ export const SourceCard: React.FC<IProps> = (props: IProps) => {
                             <Typography variant="caption">{extensionStore.name}</Typography>
                         )}
                     </Stack>
-                    {supportsLatest && (
-                        <Button
-                            {...MUIUtil.preventRippleProp()}
-                            variant="outlined"
-                            component={Link}
-                            to={AppRoutes.sources.children.browse.path(id)}
-                            state={AppRoutes.sources.children.browse.state({
-                                contentType: SourceContentType.LATEST,
-                                clearCache: true,
-                            })}
-                        >
-                            {t`Latest`}
-                        </Button>
-                    )}
-                    <CustomTooltip title={isPinned ? t`Unpin source` : t`Pin source`}>
-                        <IconButton
-                            {...MUIUtil.preventRippleProp()}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                updateSetting('isPinned', !isPinned);
-                            }}
-                            color={isPinned ? 'primary' : 'inherit'}
-                        >
-                            {isPinned ? <PushPinIcon /> : <PushPinOutlinedIcon />}
-                        </IconButton>
-                    </CustomTooltip>
-                </ListCardContent>
-            </CardActionArea>
+                </CardActionArea>
+                {supportsLatest && (
+                    <Button
+                        {...MUIUtil.preventRippleProp()}
+                        variant="outlined"
+                        size="small"
+                        component={Link}
+                        to={AppRoutes.sources.children.browse.path(id)}
+                        state={AppRoutes.sources.children.browse.state({
+                            contentType: SourceContentType.LATEST,
+                            clearCache: true,
+                        })}
+                    >
+                        {t`Latest`}
+                    </Button>
+                )}
+                <CustomTooltip title={isPinned ? t`Unpin source` : t`Pin source`}>
+                    <IconButton
+                        {...MUIUtil.preventRippleProp()}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            updateSetting('isPinned', !isPinned);
+                        }}
+                        color={isPinned ? 'primary' : 'inherit'}
+                    >
+                        {isPinned ? <PushPinIcon /> : <PushPinOutlinedIcon />}
+                    </IconButton>
+                </CustomTooltip>
+            </Stack>
         </Card>
     );
 };

@@ -864,6 +864,23 @@ export const themes = {
                         },
                     },
                 },
+                MuiListSubheader: {
+                    styleOverrides: {
+                        root: ({ theme }) => ({
+                            backgroundColor: 'transparent',
+                            color: '#737373',
+                            fontSize: '0.6875rem',
+                            fontWeight: 500,
+                            lineHeight: '28px',
+                            letterSpacing: 0,
+                            paddingLeft: 0,
+                            paddingRight: 0,
+                            ...theme.applyStyles('dark', {
+                                color: '#737373',
+                            }),
+                        }),
+                    },
+                },
                 MuiBadge: {
                     styleOverrides: {
                         badge: ({ theme }) => ({

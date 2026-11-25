@@ -86,7 +86,7 @@ export const DesktopSideBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) =
                         flexDirection: 'row',
                         px: finalIsCollapsed ? 0 : 1.5,
                         borderBottom: '1px solid',
-                        borderColor: 'divider',
+                        borderColor: '#262626',
                     }}
                 >
                     {!finalIsCollapsed && (
@@ -100,7 +100,7 @@ export const DesktopSideBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) =
                             <Typography
                                 variant="h6"
                                 noWrap
-                                sx={{ fontSize: 13, fontWeight: 600, letterSpacing: '-0.01em' }}
+                                sx={{ fontSize: 13, fontWeight: 600, letterSpacing: '-0.01em', color: '#EDEDED' }}
                             >
                                 Suwayomi
                             </Typography>
@@ -110,11 +110,23 @@ export const DesktopSideBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) =
                         size="small"
                         aria-label={finalIsCollapsed ? 'expand sidebar' : 'collapse sidebar'}
                         onClick={() => setIsCollapsed(!finalIsCollapsed)}
-                        sx={{ flexShrink: 0 }}
+                        sx={{
+                            flexShrink: 0,
+                            color: '#A1A1A1',
+                            '&:hover': { backgroundColor: '#1A1A1A', color: '#EDEDED' },
+                        }}
                     >
                         {getOptionForDirection(
-                            finalIsCollapsed ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />,
-                            finalIsCollapsed ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />,
+                            finalIsCollapsed ? (
+                                <ChevronRightIcon fontSize="small" />
+                            ) : (
+                                <ChevronLeftIcon fontSize="small" />
+                            ),
+                            finalIsCollapsed ? (
+                                <ChevronLeftIcon fontSize="small" />
+                            ) : (
+                                <ChevronRightIcon fontSize="small" />
+                            ),
                         )}
                     </IconButton>
                 </Stack>
@@ -130,7 +142,7 @@ export const DesktopSideBar = ({ navBarItems }: { navBarItems: NavbarItem[] }) =
                             return (
                                 <Fragment key={navBarItem.path}>
                                     {startsSettingsGroup && (
-                                        <Divider sx={{ my: 0.75, mx: 0.5 }} />
+                                        <Divider sx={{ my: 0.75, mx: 0.5, borderColor: '#262626' }} />
                                     )}
                                     <NavigationBarItem {...navBarItem} isCollapsed={finalIsCollapsed} />
                                 </Fragment>

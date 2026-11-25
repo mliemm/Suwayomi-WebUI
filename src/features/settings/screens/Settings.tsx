@@ -69,8 +69,8 @@ function SettingsMenu({
                     to={item.to}
                     selected={pathname.startsWith(item.to)}
                 >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={t(item.label)} />
+                    <ListItemIcon key="icon">{item.icon}</ListItemIcon>
+                    <ListItemText key="label" primary={t(item.label)} />
                 </ListItemLink>
             ))}
         </List>

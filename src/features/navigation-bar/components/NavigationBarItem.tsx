@@ -176,6 +176,18 @@ export const NavigationBarItem = ({
         );
     })();
 
+    const itemSx = (() => {
+        if (isMobileBottomBar) {
+            return mobileItemSx;
+        }
+
+        if (isCollapsed) {
+            return collapsedItemSx;
+        }
+
+        return desktopItemSx;
+    })();
+
     const item = (
         <ListItemLink
             {...slots?.listItemLink}
@@ -183,7 +195,7 @@ export const NavigationBarItem = ({
             aria-label={label}
             aria-current={isActive ? 'page' : undefined}
             sx={[
-                isMobileBottomBar ? mobileItemSx : isCollapsed ? collapsedItemSx : desktopItemSx,
+                itemSx,
                 ...(Array.isArray(slots?.listItemLink?.sx) ? slots.listItemLink.sx : [slots?.listItemLink?.sx]),
             ]}
             to={path}
