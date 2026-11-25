@@ -6,30 +6,24 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-// adopted from: https://github.com/tachiyomiorg/tachiyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/widget/EmptyView.kt
-
-import { type JSX, useMemo, useState } from 'react';
+import { type JSX, type ReactNode, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
 import { useLingui } from '@lingui/react/macro';
+import { CircleAlert } from 'lucide-react';
+import { Button as KitButton } from '@mliemm/kit/web/ui/button';
 import { extractGraphqlExceptionInfo } from '@/lib/HelperFunctions.ts';
 import { MUIUtil } from '@/lib/mui/MUI.util.ts';
-
-const ERROR_FACES = ['(･o･;)', 'Σ(ಠ_ಠ)', 'ಥ_ಥ', '(˘･_･˘)', '(；￣Д￣)', '(･Д･。'];
-
-function getRandomErrorFace() {
-    const randIndex = Math.floor(Math.random() * ERROR_FACES.length);
-    return ERROR_FACES[randIndex];
-}
 
 export interface EmptyViewProps {
     message: string;
     messageExtra?: JSX.Element | string;
     retry?: () => void;
     noFaces?: boolean;
+    action?: ReactNode;
     sx?: SxProps<Theme>;
 }
 
@@ -43,8 +37,8 @@ const ExtraMessage = ({ messageExtra }: Pick<EmptyViewProps, 'messageExtra'>) =>
     if (!isGraphqlException) {
         return (
             <Typography
-                variant="body1"
-                sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all' }}
+                variant="body2"
+                sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all', maxWidth: 480 }}
                 color="textSecondary"
             >
                 {messageExtra}
@@ -64,7 +58,7 @@ const ExtraMessage = ({ messageExtra }: Pick<EmptyViewProps, 'messageExtra'>) =>
                 }}
             >
                 <Typography
-                    variant="body1"
+                    variant="body2"
                     sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all' }}
                 >
                     {graphqlError}…
@@ -75,7 +69,7 @@ const ExtraMessage = ({ messageExtra }: Pick<EmptyViewProps, 'messageExtra'>) =>
             </Stack>
             <Collapse in={showFullError}>
                 <Typography
-                    variant="body1"
+                    variant="body2"
                     color="textSecondary"
                     sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all' }}
                 >
@@ -86,16 +80,15 @@ const ExtraMessage = ({ messageExtra }: Pick<EmptyViewProps, 'messageExtra'>) =>
     );
 };
 
-export function EmptyView({ message, messageExtra, retry, noFaces, sx }: EmptyViewProps) {
+export function EmptyView({ message, messageExtra, retry, noFaces, action, sx }: EmptyViewProps) {
     const { t } = useLingui();
-
-    const errorFace = useMemo(() => getRandomErrorFace(), []);
 
     return (
         <Stack
             sx={MUIUtil.mergeSx(
                 {
-                    p: 2,
+                    p: 3,
+                    gap: 1,
                     textAlign: 'center',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -107,20 +100,20 @@ export function EmptyView({ message, messageExtra, retry, noFaces, sx }: EmptyVi
                 sx,
             )}
         >
-            {!noFaces && (
-                <Typography variant="h3" gutterBottom sx={{ pointerEvents: 'all' }}>
-                    {errorFace}
-                </Typography>
-            )}
-            <Typography variant="h5" sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all' }}>
+            {!noFaces && <CircleAlert size={20} strokeWidth={1.5} color="#737373" />}
+            <Typography
+                variant="body1"
+                sx={{ wordBreak: 'break-word', whiteSpace: 'pre-line', pointerEvents: 'all', fontWeight: 500 }}
+            >
                 {message}
             </Typography>
             <ExtraMessage messageExtra={messageExtra} />
             {retry && (
-                <Button onClick={retry} sx={{ pointerEvents: 'all' }}>
+                <KitButton onClick={retry} className="pointer-events-auto mt-1">
                     {t`Retry`}
-                </Button>
+                </KitButton>
             )}
+            {action}
         </Stack>
     );
 }

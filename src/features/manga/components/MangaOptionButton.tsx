@@ -61,7 +61,24 @@ export const MangaOptionButton = ({
 
         return (
             <CustomTooltip title={selected ? t`Deselect` : t`Select`}>
-                <Checkbox {...MUIUtil.preventRippleProp()} checked={selected} onChange={handleSelectionChange} />
+                <Checkbox
+                    {...MUIUtil.preventRippleProp()}
+                    checked={selected}
+                    onChange={handleSelectionChange}
+                    sx={{
+                        p: '2px',
+                        color: '#EDEDED',
+                        backgroundColor: 'rgba(10, 10, 10, 0.82)',
+                        border: '1px solid #333333',
+                        borderRadius: '5px',
+                        '&:hover': {
+                            backgroundColor: '#1A1A1A',
+                        },
+                        '& .MuiSvgIcon-root': {
+                            fontSize: 16,
+                        },
+                    }}
+                />
             </CustomTooltip>
         );
     }
@@ -87,11 +104,24 @@ export const MangaOptionButton = ({
                 {...MUIUtil.preventRippleProp(bindTriggerProps, { onClick: preventDefaultAction })}
                 className="manga-option-button"
                 size="small"
-                variant="contained"
+                variant="text"
                 sx={{
-                    minWidth: 'unset',
-                    paddingX: '0',
-                    paddingY: '2.5px',
+                    minWidth: 24,
+                    width: 24,
+                    height: 24,
+                    p: 0,
+                    borderRadius: '5px',
+                    border: '1px solid #333333',
+                    backgroundColor: 'rgba(10, 10, 10, 0.82)',
+                    color: '#EDEDED',
+                    backdropFilter: 'blur(4px)',
+                    '&:hover': {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: '#444444',
+                    },
+                    '& .MuiSvgIcon-root': {
+                        fontSize: 16,
+                    },
                     visibility: popupState.isOpen ? 'visible' : 'hidden',
                     pointerEvents: 'none',
                     '@media not (pointer: fine)': {

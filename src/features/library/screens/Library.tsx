@@ -13,16 +13,18 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useCallback, useMemo, useState } from 'react';
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
 import Button from '@mui/material/Button';
+import { Button as KitButton } from '@mliemm/kit/web/ui/button';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from '@lingui/core/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
-import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { TabPanel } from '@/base/components/tabs/TabPanel.tsx';
 import { LibraryToolbarMenu } from '@/features/library/components/LibraryToolbarMenu.tsx';
+import { LibraryViewMenu } from '@/features/library/components/LibraryViewMenu.tsx';
 import { LibraryMangaGrid } from '@/features/library/components/LibraryMangaGrid.tsx';
+import { MangaGridSkeleton } from '@/features/manga/components/MangaGridSkeleton.tsx';
 import { AppbarSearch } from '@/base/components/AppbarSearch.tsx';
 import { UpdateChecker } from '@/features/updates/components/UpdateChecker.tsx';
 import { SyncButton } from '@/features/sync/components/SyncButton.tsx';
@@ -220,6 +222,7 @@ export function Library() {
             {!isSelectModeActive && activeTab && (
                 <>
                     <AppbarSearch searchHistoryKey="library" suggestions={mangaTitles} />
+                    <LibraryViewMenu />
                     <LibraryToolbarMenu category={activeTab} mangas={mangas} />
                     <SyncButton />
                     <UpdateChecker categoryId={activeTab?.id} />
@@ -271,11 +274,20 @@ export function Library() {
     }
 
     if (areCategoriesLoading || librarySizeResponse.loading) {
-        return <LoadingPlaceholder />;
+        return <MangaGridSkeleton count={18} />;
     }
 
     if (tabs.length === 0) {
-        return <EmptyViewAbsoluteCentered message={t`Your library is empty`} />;
+        return (
+            <EmptyViewAbsoluteCentered
+                message={t`Your library is empty`}
+                action={
+                    <KitButton asChild className="pointer-events-auto mt-1">
+                        <Link to={AppRoutes.browse.path()}>{t`Browse sources`}</Link>
+                    </KitButton>
+                }
+            />
+        );
     }
 
     if (tabs.length === 1) {

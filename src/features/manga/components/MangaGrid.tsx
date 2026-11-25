@@ -25,6 +25,7 @@ import { useLingui } from '@lingui/react/macro';
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { MangaCard } from '@/features/manga/components/cards/MangaCard.tsx';
+import { MangaGridSkeleton } from '@/features/manga/components/MangaGridSkeleton.tsx';
 import { DEFAULT_FULL_FAB_HEIGHT } from '@/base/components/buttons/StyledFab.tsx';
 import type { MangaCardProps, MangaIdInfo } from '@/features/manga/Manga.types.ts';
 import { useResizeObserver } from '@/base/hooks/useResizeObserver.tsx';
@@ -35,7 +36,7 @@ import { VirtuosoGridPersisted } from '@/lib/virtuoso/Component/VirtuosoGridPers
 import { MUIUtil } from '@/lib/mui/MUI.util.ts';
 
 const GridContainer = ({ children, ref, ...props }: GridTypeMap['props'] & { ref?: Ref<HTMLDivElement> }) => (
-    <Grid {...props} ref={ref} container spacing={1}>
+    <Grid {...props} ref={ref} container spacing={1.5}>
         {children}
     </Grid>
 );
@@ -107,7 +108,7 @@ const HorizontalGrid = ({
     <Grid
         ref={ref}
         container
-        spacing={1}
+        spacing={1.5}
         sx={{
             width: '100%',
             overflowX: 'auto',
@@ -326,6 +327,10 @@ export const MangaGrid: React.FC<IMangaGridProps> = ({
     );
 
     const hasNoItems = !isLoading && mangas.length === 0;
+    if (isLoading && !mangas.length && !horizontal) {
+        return <MangaGridSkeleton count={18} />;
+    }
+
     if (hasNoItems) {
         return (
             <EmptyViewAbsoluteCentered

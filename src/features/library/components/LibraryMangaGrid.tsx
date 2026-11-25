@@ -44,7 +44,7 @@ export const LibraryMangaGrid: React.FC<LibraryMangaGridProps> = ({
 
     return (
         <MangaGrid
-            gridWrapperProps={{ sx: { p: 1 } }}
+            gridWrapperProps={{ sx: { p: 0, pb: 2 } }}
             {...gridProps}
             hasNextPage={false}
             loadMore={loadMoreNoop}

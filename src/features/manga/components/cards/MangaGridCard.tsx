@@ -10,9 +10,7 @@ import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
 import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
 import { memo, useRef } from 'react';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { SpinnerImage } from '@/base/components/SpinnerImage.tsx';
@@ -21,25 +19,8 @@ import { Mangas } from '@/features/manga/services/Mangas.ts';
 import type { SpecificMangaCardProps } from '@/features/manga/Manga.types.ts';
 import { TypographyMaxLines } from '@/base/components/texts/TypographyMaxLines.tsx';
 import { MANGA_COVER_ASPECT_RATIO } from '@/features/manga/Manga.constants.ts';
-import { GridLayout } from '@/base/Base.types.ts';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { MUIUtil } from '@/lib/mui/MUI.util.ts';
-
-const BottomGradient = styled('div')({
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: '30%',
-    background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%)',
-});
-
-const BottomGradientDoubledDown = styled('div')({
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: '20%',
-    background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%)',
-});
 
 export const MangaGridCard = memo(
     ({
@@ -50,7 +31,6 @@ export const MangaGridCard = memo(
         selected,
         inLibraryIndicator,
         isInLibrary,
-        gridLayout,
         handleSelection,
         continueReadingButton,
         mangaBadges,
@@ -66,42 +46,49 @@ export const MangaGridCard = memo(
                 {...longPressBind(() => popupState.open(optionButtonRef.current))}
                 to={mangaLinkTo}
                 state={Mangas.createLocationState(manga, mode)}
-                sx={MUIUtil.mergeSx(MediaQuery.preventMobileContextMenuSx(), { textDecoration: 'none' })}
+                sx={MUIUtil.mergeSx(MediaQuery.preventMobileContextMenuSx(), {
+                    textDecoration: 'none',
+                    display: 'block',
+                    color: 'text.primary',
+                    '@media (hover: hover) and (pointer: fine)': {
+                        '&:hover .manga-option-button': {
+                            visibility: 'visible',
+                            pointerEvents: 'all',
+                        },
+                        '&:hover .source-manga-library-state-button': {
+                            display: 'inline-flex',
+                        },
+                        '&:hover .source-manga-library-state-indicator': {
+                            display: mode === 'source' ? 'none' : 'flex',
+                        },
+                    },
+                })}
             >
-                <Box
+                <Card
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        m: 0.25,
-                        outline: selected ? '4px solid' : undefined,
-                        borderRadius: selected ? '1px' : undefined,
-                        outlineColor: (theme) => theme.vars.palette.primary.main,
-                        backgroundColor: (theme) => (selected ? theme.vars.palette.primary.main : undefined),
-                        '@media (hover: hover) and (pointer: fine)': {
-                            '&:hover .manga-option-button': {
-                                visibility: 'visible',
-                                pointerEvents: 'all',
-                            },
-                            '&:hover .source-manga-library-state-button': {
-                                display: 'inline-flex',
-                            },
-                            '&:hover .source-manga-library-state-indicator': {
-                                display: mode === 'source' ? 'none' : 'flex',
-                            },
+                        overflow: 'hidden',
+                        borderColor: selected ? '#5E6AD2' : undefined,
+                        boxShadow: selected ? '0 0 0 1px #5E6AD2' : 'none',
+                        '&:hover': {
+                            borderColor: selected ? '#5E6AD2' : undefined,
                         },
                     }}
                 >
-                    <Card
+                    <Box
                         sx={{
-                            // force standard aspect ratio of manga covers
-                            aspectRatio: MANGA_COVER_ASPECT_RATIO,
+                            position: 'relative',
                             display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'stretch',
                         }}
                     >
-                        <CardActionArea
+                        <Box
                             sx={{
                                 position: 'relative',
-                                height: '100%',
+                                width: '100%',
+                                aspectRatio: MANGA_COVER_ASPECT_RATIO,
+                                backgroundColor: '#161616',
+                                overflow: 'hidden',
                             }}
                         >
                             <SpinnerImage
@@ -129,12 +116,13 @@ export const MangaGridCard = memo(
                             <Stack
                                 direction="row"
                                 sx={{
-                                    alignItems: 'start',
+                                    alignItems: 'flex-start',
                                     justifyContent: 'space-between',
                                     position: 'absolute',
-                                    top: (theme) => theme.spacing(1),
-                                    left: (theme) => theme.spacing(1),
-                                    right: (theme) => theme.spacing(1),
+                                    top: 6,
+                                    left: 6,
+                                    right: 6,
+                                    gap: 1,
                                 }}
                             >
                                 {mangaBadges}
@@ -146,61 +134,51 @@ export const MangaGridCard = memo(
                                     handleSelection={handleSelection}
                                 />
                             </Stack>
-                            <>
-                                {gridLayout !== GridLayout.Comfortable && (
-                                    <>
-                                        <BottomGradient />
-                                        <BottomGradientDoubledDown />
-                                    </>
-                                )}
-                                <Stack
-                                    direction="row"
-                                    sx={{
-                                        justifyContent: gridLayout !== GridLayout.Comfortable ? 'space-between' : 'end',
-                                        alignItems: 'end',
-                                        position: 'absolute',
-                                        bottom: 0,
-                                        width: '100%',
-                                        p: 1,
-                                        gap: 1,
-                                    }}
-                                >
-                                    {gridLayout !== GridLayout.Comfortable && (
-                                        <CustomTooltip title={title} placement="top">
-                                            <TypographyMaxLines
-                                                component="h3"
-                                                sx={{
-                                                    color: 'white',
-                                                    textShadow: '0px 0px 3px #000000',
-                                                }}
-                                            >
-                                                {title}
-                                            </TypographyMaxLines>
-                                        </CustomTooltip>
-                                    )}
-                                    {continueReadingButton}
-                                </Stack>
-                            </>
-                        </CardActionArea>
-                    </Card>
-                    {gridLayout === GridLayout.Comfortable && (
-                        <Stack sx={{ pb: 1 }}>
+                            <Stack
+                                direction="row"
+                                sx={{
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'flex-end',
+                                    position: 'absolute',
+                                    bottom: 6,
+                                    right: 6,
+                                    left: 6,
+                                    gap: 1,
+                                }}
+                            >
+                                {continueReadingButton}
+                            </Stack>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: '100%',
+                                px: 1,
+                                pt: 0.75,
+                                pb: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 0.25,
+                            }}
+                        >
                             <CustomTooltip title={title} placement="top">
                                 <TypographyMaxLines
                                     component="h3"
+                                    lines={2}
                                     sx={{
-                                        color: (theme) =>
-                                            selected ? theme.vars.palette.primary.contrastText : 'text.primary',
-                                        height: '3rem',
-                                        pt: 0.5,
+                                        fontSize: 13,
+                                        fontWeight: 500,
+                                        lineHeight: 1.35,
+                                        letterSpacing: '-0.006em',
+                                        minHeight: '2.7em',
+                                        color: 'text.primary',
                                     }}
                                 >
                                     {title}
                                 </TypographyMaxLines>
                             </CustomTooltip>
-                        </Stack>
-                    )}
-                </Box>
+                        </Box>
+                    </Box>
+                </Card>
             </Link>
         );
     },

@@ -127,7 +127,7 @@ export class MediaQuery {
     static preventMobileContextMenuSx(): SxProps<Theme> {
         return {
             userSelect: 'none',
-            '-webkit-touch-callout': 'none',
+            WebkitTouchCallout: 'none',
         };
     }
 }
