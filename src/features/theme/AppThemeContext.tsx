@@ -9,7 +9,7 @@
 import type { ReactNode } from 'react';
 import React, { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Direction } from '@mui/material/styles';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, useColorScheme } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import type { AppTheme } from '@/features/theme/services/AppThemes.ts';
@@ -44,6 +44,17 @@ export const AppThemeContext = React.createContext<TAppThemeContext>({
 });
 
 export const useAppThemeContext = () => useContext(AppThemeContext);
+
+const ColorSchemeSync = () => {
+    const { themeMode } = useAppThemeContext();
+    const { setMode } = useColorScheme();
+
+    useEffect(() => {
+        setMode(themeMode);
+    }, [themeMode, setMode]);
+
+    return null;
+};
 
 export const AppThemeContextProvider = ({ children }: { children: ReactNode }) => {
     const { t } = useLingui();
@@ -162,7 +173,10 @@ export const AppThemeContextProvider = ({ children }: { children: ReactNode }) =
     return (
         <AppThemeContext.Provider value={appThemeContext}>
             <CacheProvider value={DIRECTION_TO_CACHE[currentDirection]}>
-                <ThemeProvider theme={theme}>{children}</ThemeProvider>
+                <ThemeProvider theme={theme}>
+                    <ColorSchemeSync />
+                    {children}
+                </ThemeProvider>
             </CacheProvider>
         </AppThemeContext.Provider>
     );
